@@ -1,7 +1,9 @@
+// app/layout.js
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/header/Header";
 import Footer from "@/components/footer/Footer";
+import { UserProvider } from "@/context/UserContext"; // Импортируем провайдер
 
 const montserrat = Montserrat({
     subsets: ["latin"],
@@ -16,9 +18,11 @@ export default function RootLayout({ children }) {
     return (
         <html lang="en">
             <body className={montserrat.className}>
-                <Header />
-                <main>{children}</main>
-                <Footer />
+                <UserProvider>  {/* Оборачиваем в UserProvider */}
+                    <Header />
+                    <main>{children}</main>
+                    <Footer />
+                </UserProvider>
             </body>
         </html>
     );
