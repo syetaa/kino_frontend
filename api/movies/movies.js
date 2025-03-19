@@ -8,7 +8,7 @@ const BASE_URL = `${protocol}://${host}:${port}`;
 // Получение популярных фильмов
 export async function getTrendingMovies() {
     try {
-        const response = await fetch(`${BASE_URL}/movies/movies/popular`);
+        const response = await fetch(`${BASE_URL}/movies/popular`);
         if (!response.ok) {
             throw new Error(`Ошибка: ${response.status}`);
         }
@@ -22,7 +22,7 @@ export async function getTrendingMovies() {
 // Получение избранных фильмов
 export const getFavoriteMovies = async (userId) => {
     try {
-        const response = await fetch(`${BASE_URL}/movies/movies/favorite`);
+        const response = await fetch(`${BASE_URL}/movies/favorite`);
         if (!response.ok) {
             throw new Error(`Ошибка: ${response.status}`);
         }
@@ -33,39 +33,44 @@ export const getFavoriteMovies = async (userId) => {
     }
 };
 
-// Получение деталей фильма
-export const getMovieDetails = async (id) => {
-    try {
-        const response = await fetch(`${BASE_URL}/movies/${id}`);
-        if (!response.ok) {
-            throw new Error(`Ошибка: ${response.status}`);
-        }
-        return await response.json();
-    } catch (error) {
-        console.error("Ошибка при получении деталей фильма:", error);
-        return null;
-    }
-};
-
 // Добавление фильма в избранное
-export const addFavoriteMovie = async (userId, movie) => {
-    try {
-        const response = await fetch(`${BASE_URL}/movies/movies/favorite`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ user_id: userId, movie }),
-        });
-        if (!response.ok) {
-            throw new Error(`Ошибка: ${response.status}`);
-        }
-        return await response.json();
-    } catch (error) {
-        console.error("Ошибка при добавлении фильма в избранное:", error);
-        return null;
+export const addFavoriteMovie = async (movie) => {
+    const token = localStorage.getItem("token"); // Получаем токен из localStorage
+    if (!token) {
+      throw new Error("Пользователь не авторизован");
     }
-};
+  
+    try {
+      const response = await fetch("http://localhost:8000/movies/favorite", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, // Отправляем токен в заголовке
+        },
+        body: JSON.stringify(movie), // Передаем весь объект фильма
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Ошибка при добавлении фильма в избранное: ${response.status}`);
+      }
+  
+      return response.json();
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
 
 // Получение информации о фильме по ID
-
+export const getMovieDetails = async (id) => { 
+    try {
+      const response = await fetch(`${BASE_URL}/movies/${id}`);
+      if (!response.ok) {
+        throw new Error(`Ошибка при получении фильма с ID: ${id}`);
+      }
+      return await response.json(); // Возвращаем данные о фильме
+    } catch (error) {
+      console.error("Ошибка при получении деталей фильма:", error);
+      return null;
+    }
+  };

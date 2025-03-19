@@ -4,12 +4,16 @@ import { getFavoriteMovies } from "@/api/movies/movies";
 import Slider from "@/components/carousel/Carousel";
 import styles from './sliderFavourite.module.css'
 
-const SliderFavorites = ({ size }) => {
+const SliderFavorites = ({ userId, size }) => {
     const [movies, setMovies] = useState([]);
 
     useEffect(() => {
-        getFavoriteMovies().then(setMovies);
-    }, []);
+        const fetchFavoriteMovies = async () => {
+            const fetchedMovies = await getFavoriteMovies(userId);
+            setMovies(fetchedMovies);
+        };
+        fetchFavoriteMovies();
+    }, [userId]);
 
     return (
         <div className={styles.textmain}>

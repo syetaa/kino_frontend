@@ -1,30 +1,42 @@
-"use client";
+'use client'
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { getMovieDetails } from "@/api/movies/moviess";
-import styles from "./page.module.css";
+import MovieDetails from "@/components/movie_details/Movie_details"; // Импортируем MovieDetails
+import { getMovieDetails } from "@/api/movies/movies"; // Импортируем getMovieDetails из api
+import { useParams } from "next/navigation"; // Импортируем useParams для получения параметров маршрута
 
 const MoviePage = () => {
-    const router = useRouter();
-    const { id } = router.query;
-    const [movie, setMovie] = useState(null);
+  const [movie, setMovie] = useState(null); // Хранение данных о фильме
+  const [error, setError] = useState(null); // Хранение ошибок
 
-    useEffect(() => {
-        if (id) {
-            getMovieDetails(id).then(setMovie);
+  // Получаем ID фильма с помощью хука useParams
+  const { id } = useParams();
+
+  // Запрашиваем данные о фильме при загрузке компонента
+  useEffect(() => {
+    const fetchMovie = async () => {
+      try {
+        const movieData = await getMovieDetails(id); // Используем метод из api
+        if (!movieData) {
+          throw new Error("Ошибка при загрузке данных фильма");
         }
-    }, [id]);
+        setMovie(movieData); // Сохраняем данные фильма
+      } catch (error) {
+        setError(error.message); // Обрабатываем ошибку
+      }
+    };
 
-    if (!movie) return <div className={styles.loading}>Загрузка...</div>;
+    fetchMovie();
+  }, [id]);
 
-    return (
-        <div className={styles.container}>
-            <h1 className={styles.title}>{movie.title} ({movie.year})</h1>
-            <img className={styles.poster} src={movie.poster_url} alt={movie.title} />
-            {movie.description && <p className={styles.description}>{movie.description}</p>}
-        </div>
-    );
+  if (error) return <p>{error}</p>; // Если ошибка, показываем сообщение
+  if (!movie) return <p>Загрузка...</p>; // Если фильм не загружен, показываем "Загрузка"
+
+  return (
+    <div>
+      <MovieDetails movie={movie} /> {/* Передаем данные фильма в MovieDetails */}
+    </div>
+  );
 };
 
 export default MoviePage;
