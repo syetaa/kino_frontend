@@ -1,8 +1,8 @@
 const protocol = process.env.NEXT_PUBLIC_BACKEND_PROTOCOL || "http";
-const host = process.env.NEXT_PUBLIC_BACKEND_HOST || "127.0.0.1";  // ✅ Исправь на localhost, если нужно
+const host = process.env.NEXT_PUBLIC_BACKEND_HOST || "127.0.0.1";
 const port = process.env.NEXT_PUBLIC_BACKEND_PORT || "8000";
 
-const BASE_URL = `${protocol}://${host}:${port}`;  // ✅ Добавили /auth
+const BASE_URL = `${protocol}://${host}:${port}`;
 
 // Вход (логин)
 export async function onSignIn(username, password) {
@@ -11,11 +11,11 @@ export async function onSignIn(username, password) {
     try {
         const response = await fetch(url, {
             method: "POST",
-            headers: { 
-                "Content-Type": "application/json", // Отправляем JSON
+            headers: {
+                "Content-Type": "application/json",
                 "Accept": "application/json",
             },
-            body: JSON.stringify({ username, password }), // JSON, а не FormData
+            body: JSON.stringify({ username, password }),
         });
 
         if (!response.ok) {
@@ -28,7 +28,7 @@ export async function onSignIn(username, password) {
             localStorage.setItem("token", data["access_token"]);
             alert("Успешный вход");
             return true;
-            
+
         }
     } catch (error) {
         alert(error.message);

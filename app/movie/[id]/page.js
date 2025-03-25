@@ -1,42 +1,39 @@
 'use client'
-
 import { useEffect, useState } from "react";
-import MovieDetails from "@/components/movie_details/Movie_details"; // Импортируем MovieDetails
-import { getMovieDetails } from "@/api/movies/movies"; // Импортируем getMovieDetails из api
-import { useParams } from "next/navigation"; // Импортируем useParams для получения параметров маршрута
+import MovieDetails from "@/components/movie_details/Movie_details";
+import { getMovieDetails } from "@/api/movies/movies";
+import { useParams } from "next/navigation";
 
 const MoviePage = () => {
-  const [movie, setMovie] = useState(null); // Хранение данных о фильме
-  const [error, setError] = useState(null); // Хранение ошибок
+    const [movie, setMovie] = useState(null);
+    const [error, setError] = useState(null);
 
-  // Получаем ID фильма с помощью хука useParams
-  const { id } = useParams();
+    const { id } = useParams();
 
-  // Запрашиваем данные о фильме при загрузке компонента
-  useEffect(() => {
-    const fetchMovie = async () => {
-      try {
-        const movieData = await getMovieDetails(id); // Используем метод из api
-        if (!movieData) {
-          throw new Error("Ошибка при загрузке данных фильма");
-        }
-        setMovie(movieData); // Сохраняем данные фильма
-      } catch (error) {
-        setError(error.message); // Обрабатываем ошибку
-      }
-    };
+    useEffect(() => {
+        const fetchMovie = async () => {
+            try {
+                const movieData = await getMovieDetails(id);
+                if (!movieData) {
+                    throw new Error("Ошибка при загрузке данных фильма");
+                }
+                setMovie(movieData);
+            } catch (error) {
+                setError(error.message);
+            }
+        };
 
-    fetchMovie();
-  }, [id]);
+        fetchMovie();
+    }, [id]);
 
-  if (error) return <p>{error}</p>; // Если ошибка, показываем сообщение
-  if (!movie) return <p>Загрузка...</p>; // Если фильм не загружен, показываем "Загрузка"
+    if (error) return <p>{error}</p>;
+    if (!movie) return <p>Загрузка...</p>;
 
-  return (
-    <div>
-      <MovieDetails movie={movie} /> {/* Передаем данные фильма в MovieDetails */}
-    </div>
-  );
+    return (
+        <div>
+            <MovieDetails movie={movie} />
+        </div>
+    );
 };
 
 export default MoviePage;

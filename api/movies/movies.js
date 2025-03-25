@@ -1,5 +1,3 @@
-import axios from "axios";
-
 const protocol = process.env.NEXT_PUBLIC_BACKEND_PROTOCOL || "http";
 const host = process.env.NEXT_PUBLIC_BACKEND_HOST || "localhost";
 const port = process.env.NEXT_PUBLIC_BACKEND_PORT || "8000";
@@ -35,42 +33,42 @@ export const getFavoriteMovies = async (userId) => {
 
 // Добавление фильма в избранное
 export const addFavoriteMovie = async (movie) => {
-    const token = localStorage.getItem("token"); // Получаем токен из localStorage
+    const token = localStorage.getItem("token");
     if (!token) {
-      throw new Error("Пользователь не авторизован");
+        throw new Error("Пользователь не авторизован");
     }
-  
+
     try {
-      const response = await fetch("http://localhost:8000/movies/favorite", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`, // Отправляем токен в заголовке
-        },
-        body: JSON.stringify(movie), // Передаем весь объект фильма
-      });
-  
-      if (!response.ok) {
-        throw new Error(`Ошибка при добавлении фильма в избранное: ${response.status}`);
-      }
-  
-      return response.json();
+        const response = await fetch(`${BASE_URL}/movies/favorite`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify(movie),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Ошибка при добавлении фильма в избранное: ${response.status}`);
+        }
+
+        return response.json();
     } catch (error) {
-      console.error(error);
-      throw error;
+        console.error(error);
+        throw error;
     }
-  };
+};
 
 // Получение информации о фильме по ID
-export const getMovieDetails = async (id) => { 
+export const getMovieDetails = async (id) => {
     try {
-      const response = await fetch(`${BASE_URL}/movies/${id}`);
-      if (!response.ok) {
-        throw new Error(`Ошибка при получении фильма с ID: ${id}`);
-      }
-      return await response.json(); // Возвращаем данные о фильме
+        const response = await fetch(`${BASE_URL}/movies/${id}`);
+        if (!response.ok) {
+            throw new Error(`Ошибка при получении фильма с ID: ${id}`);
+        }
+        return await response.json();
     } catch (error) {
-      console.error("Ошибка при получении деталей фильма:", error);
-      return null;
+        console.error("Ошибка при получении деталей фильма:", error);
+        return null;
     }
-  };
+};
